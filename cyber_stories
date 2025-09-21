@@ -1,0 +1,10 @@
+cyber_stories/
+├── app.py
+├── templates/
+│   ├── index.html
+│   ├── post.html
+│   ├── register.html
+│   └── login.html
+├── static/
+│   └── style.css
+└── database.db   (optional, can be auto-created)
