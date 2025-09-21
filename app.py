@@ -1,69 +1,36 @@
-from flask import Flask, render_template, request, redirect, session
-import sqlite3
-import requests
+from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey"
 
-conn = sqlite3.connect('database.db', check_same_thread=False)
-c = conn.cursor()
-c.execute('''CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, email TEXT, password TEXT)''')
-c.execute('''CREATE TABLE IF NOT EXISTS posts(id INTEGER PRIMARY KEY, user TEXT, story TEXT, link TEXT)''')
-conn.commit()
+# In-memory storage (demo only)
+stories = []
 
 @app.route('/')
-def index():
-    c.execute("SELECT * FROM posts ORDER BY id DESC")
-    posts = c.fetchall()
-    return render_template('index.html', posts=posts)
+def home():
+    return render_template("index.html")
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        c.execute("INSERT INTO users(email,password) VALUES(?,?)", (email, password))
-        conn.commit()
-        return redirect('/login')
-    return render_template('register.html')
+@app.route('/stories', methods=["GET", "POST"])
+def story_page():
+    if request.method == "POST":
+        title = request.form.get("title")
+        content = request.form.get("content")
+        if title and content:
+            stories.append({"title": title, "content": content})
+        return redirect(url_for("story_page"))
+    return render_template("stories.html", stories=stories)
 
-@app.route('/login', methods=['GET','POST'])
-def login():
-    if request.method=='POST':
-        email = request.form['email']
-        password = request.form['password']
-        c.execute("SELECT * FROM users WHERE email=? AND password=?", (email,password))
-        user = c.fetchone()
-        if user:
-            session['user'] = email
-            return redirect('/')
+@app.route('/checker', methods=["GET", "POST"])
+def checker():
+    result = None
+    if request.method == "POST":
+        user_input = request.form.get("input_text")
+        if "@" in user_input and not user_input.endswith(".com"):
+            result = "⚠️ Suspicious email format"
+        elif "http" in user_input and "login" in user_input.lower():
+            result = "⚠️ Possible phishing link"
         else:
-            return "Invalid credentials"
-    return render_template('login.html')
-
-@app.route('/post', methods=['GET','POST'])
-def post_story():
-    if 'user' not in session:
-        return redirect('/login')
-    if request.method=='POST':
-        story = request.form['story']
-        link = request.form['link']
-        if link:
-            try:
-                r = requests.get(link, timeout=3)
-                if r.status_code != 200:
-                    link = "⚠ Possibly Fake Link"
-            except:
-                link = "⚠ Possibly Fake Link"
-        c.execute("INSERT INTO posts(user,story,link) VALUES(?,?,?)", (session['user'],story,link))
-        conn.commit()
-        return redirect('/')
-    return render_template('post.html')
-
-@app.route('/logout')
-def logout():
-    session.pop('user', None)
-    return redirect('/')
-
-if __name__ == "__main__":
-    app.run(debug=True)
+            result = "✅ Looks safe (but always double-check)"
+    return render_template("checker.html", result=result)
+    
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)

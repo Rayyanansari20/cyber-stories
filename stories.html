@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Stories</title>
+</head>
+<body>
+  <h1>📖 Cyberbullying & Phishing Stories</h1>
+  <form method="POST">
+    <input type="text" name="title" placeholder="Story Title" required><br>
+    <textarea name="content" placeholder="Write your story..." required></textarea><br>
+    <button type="submit">Post Story</button>
+  </form>
+  <h2>All Stories</h2>
+  <ul>
+    {% for s in stories %}
+      <li><b>{{ s.title }}</b>: {{ s.content }}</li>
+    {% endfor %}
+  </ul>
+  <a href="/">⬅ Back</a>
+</body>
+</html>

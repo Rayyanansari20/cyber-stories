@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Scam Checker</title>
+</head>
+<body>
+  <h1>🔎 Check Email or Link</h1>
+  <form method="POST">
+    <input type="text" name="input_text" placeholder="Enter email or link" required>
+    <button type="submit">Check</button>
+  </form>
+  {% if result %}
+    <h3>Result: {{ result }}</h3>
+  {% endif %}
+  <a href="/">⬅ Back</a>
+</body>
+</html>

@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Cyber Stories</title>
-<link rel="stylesheet" href="/static/style.css">
+  <title>Cyber Stories</title>
 </head>
 <body>
-<h1>Stories Feed</h1>
-<a href="/post">Post Your Story</a> | <a href="/logout">Logout</a>
-<ul>
-{% for post in posts %}
-<li><b>{{post[1]}}</b>: {{post[2]}} <br> Link: {{post[3]}}</li>
-{% endfor %}
-</ul>
+  <h1>🚀 Cyber Stories Project</h1>
+  <nav>
+    <a href="/stories">📖 Share & Read Stories</a> | 
+    <a href="/checker">🔎 Scam Checker</a>
+  </nav>
 </body>
 </html>
